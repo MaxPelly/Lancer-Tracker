@@ -1,3 +1,5 @@
 /config.ini
 /Players.json
 /.ipynb_checkpoints/**
+/bot_config.ini
+/lancer_config.ini
