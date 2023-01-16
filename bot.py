@@ -67,10 +67,9 @@ async def set_channel(
     if len(channel) == 0:
         await ctx.reply(f"{bot.incorect_args_error} please provide the name of the channel")
         return
-    user_input = " ".join(channel)
     names = {channel.name:channel.id for channel in ctx.guild.channels if type(channel) == discord.channel.TextChannel}
-    if channel_id := names.get(user_input, False):
-        await ctx.reply(f"Setting Channel to {user_input}")
+    if channel_id := names.get(channel, False):
+        await ctx.reply(f"Setting Channel to {channel}")
         bot.main_channel=channel_id
         channel = bot.get_channel(channel_id)
         with bot.config.lock:
@@ -79,7 +78,7 @@ async def set_channel(
         await channel.send('This is the new bot channel', delete_after=10)
     else:
         channel_names = "\n- ".join(names.keys())
-        await ctx.reply(f"\"{user_input}\" does not appear to be a valid channel.\nAvaliable channels are:\n- {channel_names}")
+        await ctx.reply(f"\"{channel}\" does not appear to be a valid channel.\nAvaliable channels are:\n- {channel_names}")
 
         
 @bot.command()
@@ -317,8 +316,4 @@ async def on_command_error(ctx, error):
     # THERE HAS GOT TO BE A BETTER WAY TO DO THIS!!!!
     await bot.err(ctx, error)
 
-async def run():
-    await bot.run(config.get("bot", "token"))
-    
-if __name__ == "__main__":
-    run()
+bot.run(config.get("bot", "token"))
