@@ -3,3 +3,4 @@
 /.ipynb_checkpoints/**
 /bot_config.ini
 /lancer_config.ini
+/__pycache__/**
