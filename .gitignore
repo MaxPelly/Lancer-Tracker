@@ -4,3 +4,4 @@
 /bot_config.ini
 /lancer_config.ini
 /__pycache__/**
+*.log
