@@ -1,27 +1,12 @@
 from tinydb import TinyDB, Query
 from threading import Lock
-import configparser
-from os.path import exists
-
-def update_config(config, config_file):
-    with open(config_file, "w+") as cfg_file:
-                config.write(cfg_file)
 
 
-config = configparser.ConfigParser()
-CONFIG_FILE = "lancer_config.ini"
-config.read(CONFIG_FILE)
-config.lock = Lock()
-
-if not exists(CONFIG_FILE):
-    config.add_section("lancer")
-    update_config(config, CONFIG_FILE)
-    
     
 class Player(object):
-    licence_cost = config.get("lancer", "licence_cost", fallback=500)
-    talent_cost = config.get("lancer", "talent_cost", fallback=300)
-    training_cost = config.get("lancer", "training_cost", fallback=200)
+    licence_cost = 500
+    talent_cost = 300
+    training_cost = 200
     bought_12_error = "You may only buy 12 of each upgrade."
     no_money_error = "You don't have sufficient manna."
     
