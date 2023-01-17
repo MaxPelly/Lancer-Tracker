@@ -1,6 +1,6 @@
 # Lancer-Tracker
 
-A simple discord bot to keep track of Manna gain and spending in WestMArches style Lancer games.
+A simple discord bot to keep track of Manna gain and spending in Westmarches style Lancer games.
 
 # Current Limitations
 
