@@ -4,9 +4,11 @@ import logging
 import typing
 from threading import Lock
 from Player import Player
+import logging
 
 import configparser
 from os.path import exists
+
 def update_config(config, config_file):
     with open(config_file, "w+") as cfg_file:
                 config.write(cfg_file)
@@ -20,6 +22,7 @@ if not exists(CONFIG_FILE):
     config.add_section("bot")
     update_config(config, CONFIG_FILE)
 
+
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix='>', intents=intents)
@@ -30,6 +33,8 @@ bot.CONFIG_FILE = CONFIG_FILE
 bot.main_channel = config.getint("bot", "main_channel", fallback=None)
 bot.gm_manna = config.getint("bot", "gm_manna", fallback=100)
 bot.err = bot.on_command_error
+handler = logging.FileHandler(filename="botlog.log", encoding="utf-8", mode='w')
+
 
 bot.no_mech_error = f"You do not seem to have a mech. Run \"{bot.command_prefix}init <callsign>\" to create one."
 bot.incorect_args_error = "This function rerquires input: "
@@ -41,6 +46,8 @@ async def check_channel_set(ctx):
         names = [channel.name for channel in ctx.guild.channels if type(channel) == discord.channel.TextChannel]
         name_text = "\n- ".join(names)
         await ctx.reply(f"Using this function requires setting the bot channel. Please reply \"{bot.command_prefix}set_channel <channel name>\".\nAvaliable channels:\n- {name_text}", delete_after=10)
+        return False
+    return True
     
 
 async def check_channel_or_dm(ctx):
@@ -51,7 +58,7 @@ async def check_channel_or_dm(ctx):
     return False
 
 
-@bot.command()
+@bot.command(aliases=['sc'])
 async def set_channel(
     ctx,
     *,
@@ -81,7 +88,7 @@ async def set_channel(
         await ctx.reply(f"\"{channel}\" does not appear to be a valid channel.\nAvaliable channels are:\n- {channel_names}")
 
         
-@bot.command()
+@bot.command(aliases=['i'])
 @commands.check(check_channel_or_dm)
 async def init(
     ctx,
@@ -124,7 +131,7 @@ async def delete(ctx):
         await ctx.reply(bot.no_mech_error)
 
         
-@bot.command()
+@bot.command(aliases=['c'])
 @commands.check(check_channel_or_dm)
 async def check(ctx):
     """
@@ -135,7 +142,7 @@ async def check(ctx):
     else:
         await ctx.reply(bot.no_mech_error)
         
-@bot.command()
+@bot.command(aliases=['uc'])
 @commands.check(check_channel_or_dm)
 async def update_callsign(
     ctx,
@@ -156,7 +163,7 @@ async def update_callsign(
 
 
 
-@bot.command()
+@bot.command(aliases=['b'])
 @commands.dm_only()
 async def buy(
     ctx,
@@ -204,7 +211,7 @@ async def buy(
         return
     
 
-@bot.command()
+@bot.command(aliases=['cm'])
 @commands.dm_only()
 @commands.check(check_channel_set)
 async def complete_mission(
@@ -240,7 +247,7 @@ async def complete_mission(
     await channel.send(f"A game run by {ctx.author.mention} completed attended by {players}. {manna} Manna is awarded.")
 
     
-@bot.command()
+@bot.command(aliases=['pcm'])
 @commands.dm_only()
 @commands.check(check_channel_set)
 async def player_complete_mission(
@@ -291,7 +298,7 @@ async def player_complete_mission(
     await channel.send(f"A mission by {gm.mention} was sucesfully completed by {player_names}. {manna} Manna is awarded.")
 
     
-@bot.command()
+@bot.command(aliases=['p'])
 @commands.check(check_channel_or_dm)
 async def ping(ctx):
     """
@@ -316,4 +323,4 @@ async def on_command_error(ctx, error):
     # THERE HAS GOT TO BE A BETTER WAY TO DO THIS!!!!
     await bot.err(ctx, error)
 
-bot.run(config.get("bot", "token"))
+bot.run(config.get("bot", "token"), log_handler=handler)
