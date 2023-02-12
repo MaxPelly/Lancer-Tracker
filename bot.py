@@ -95,13 +95,13 @@ async def relay(
 
     repeats = version_one.intersection(version_two)
     urls = ["https://www.relay.fm" + i.split(" ")[1] + ".rss" for i in repeats if "feed" in i]
-    await messgae.edit(content=f"{len(urls)} shows found. Processing.")
+    await message.edit(content=f"{len(urls)} shows found. Processing.")
 
     out = ""
     for url in urls:
         feed = ET.fromstring(requests.get(url).text)
         title = feed.find("channel").find("title").text
-        out += f"{title}: {feed}"
+        out += f"{title}: {url}"
         await message.edit(content=out)
         out += "\n"
 
