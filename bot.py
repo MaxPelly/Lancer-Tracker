@@ -89,19 +89,21 @@ async def relay(
     """
     Mystery Biscuits
     """
+    message = await ctx.send("Fetching show lists.")
     version_one = set(requests.get("https://www.relay.fm/robots.txt").text.split("\n"))
     version_two = set(requests.get("https://www.relay.fm/robots.txt").text.split("\n"))
 
     repeats = version_one.intersection(version_two)
     urls = ["https://www.relay.fm" + i.split(" ")[1] + ".rss" for i in repeats if "feed" in i]
+    await messgae.edit(content=f"{len(urls)} shows found. Processing.")
 
     out = ""
     for url in urls:
         feed = ET.fromstring(requests.get(url).text)
         title = feed.find("channel").find("title").text
-        out += f"{title}: {feed}\n"
-    ctx.reply(out)
-
+        out += f"{title}: {feed}"
+        await message.edit(content=out)
+        out += "\n"
 
 @bot.command(aliases=['sc'])
 async def set_channel(
